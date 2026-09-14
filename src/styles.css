@@ -1,0 +1,409 @@
+:root {
+  color-scheme: dark;
+  font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+  color: #f2f5f0;
+  background: #0b1210;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0b1210;
+}
+
+#game-canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  outline: none;
+  cursor: crosshair;
+}
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+#hud {
+  position: absolute;
+  inset: 0;
+}
+
+.bars {
+  position: absolute;
+  left: 24px;
+  bottom: 28px;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bar {
+  height: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.bar .fill {
+  height: 100%;
+  width: 100%;
+  transition: width 80ms linear;
+}
+
+.bar.health .fill {
+  background: linear-gradient(90deg, #8b1e1e, #d64545);
+}
+
+.bar.shield .fill {
+  background: linear-gradient(90deg, #1d5f8a, #4fd2ff);
+}
+
+.bar.shield.active {
+  box-shadow: 0 0 12px rgba(79, 210, 255, 0.55);
+}
+
+#hud-meta {
+  position: absolute;
+  left: 24px;
+  bottom: 70px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+#hud-prompt {
+  position: absolute;
+  top: 28%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 600;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+#hud-help {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  max-width: 360px;
+  text-align: right;
+  font-size: 12px;
+  line-height: 1.45;
+  opacity: 0.75;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+#crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+#crosshair.fpv {
+  opacity: 1;
+}
+
+#crosshair.ads {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+#scope-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    transparent 0%,
+    transparent 34%,
+    rgba(0, 0, 0, 0.72) 35%,
+    rgba(0, 0, 0, 0.94) 48%,
+    #000 62%
+  );
+}
+
+#scope-overlay.hidden {
+  display: none;
+}
+
+.scope-lens {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(72vh, 72vw);
+  height: min(72vh, 72vw);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 3px rgba(30, 30, 30, 0.95),
+    inset 0 0 40px rgba(0, 0, 0, 0.35),
+    0 0 0 2px rgba(80, 80, 80, 0.5);
+}
+
+.scope-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(180, 220, 255, 0.12), transparent 45%),
+    radial-gradient(circle at center, rgba(20, 40, 30, 0.08), transparent 70%);
+  mix-blend-mode: soft-light;
+}
+
+.scope-ring {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.55);
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.25);
+}
+
+.scope-reticle {
+  position: absolute;
+  inset: 0;
+}
+
+.scope-h,
+.scope-v {
+  position: absolute;
+  background: rgba(20, 20, 20, 0.92);
+}
+
+.scope-h {
+  left: 12%;
+  right: 12%;
+  top: 50%;
+  height: 1.5px;
+  margin-top: -0.75px;
+}
+
+.scope-v {
+  top: 12%;
+  bottom: 12%;
+  left: 50%;
+  width: 1.5px;
+  margin-left: -0.75px;
+}
+
+.scope-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: #c01818;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.scope-tick {
+  position: absolute;
+  background: rgba(20, 20, 20, 0.85);
+}
+
+.scope-tick.t1,
+.scope-tick.t2 {
+  width: 10px;
+  height: 1.5px;
+  top: 50%;
+  margin-top: -0.75px;
+}
+
+.scope-tick.t1 {
+  left: calc(50% - 48px);
+}
+
+.scope-tick.t2 {
+  left: calc(50% + 38px);
+}
+
+.scope-tick.t3,
+.scope-tick.t4 {
+  width: 1.5px;
+  height: 10px;
+  left: 50%;
+  margin-left: -0.75px;
+}
+
+.scope-tick.t3 {
+  top: calc(50% - 48px);
+}
+
+.scope-tick.t4 {
+  top: calc(50% + 38px);
+}
+
+#scope-mag {
+  position: absolute;
+  right: 8%;
+  bottom: 10%;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: rgba(220, 230, 220, 0.75);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+#hud-help.dimmed {
+  opacity: 0.2;
+}
+
+#weapon-bar {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  pointer-events: none;
+}
+
+#weapon-bar .wep {
+  min-width: 72px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.45);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0.65;
+}
+
+#weapon-bar .wep span {
+  display: block;
+  font-size: 10px;
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+
+#weapon-bar .wep.active {
+  opacity: 1;
+  border-color: rgba(255, 220, 120, 0.85);
+  background: rgba(40, 30, 10, 0.7);
+  box-shadow: 0 0 10px rgba(255, 180, 60, 0.25);
+}
+
+#hit-marker {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#hit-marker::before,
+#hit-marker::after {
+  content: "";
+  position: absolute;
+  background: #ff4d4d;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+#hit-marker::before {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+}
+
+#hit-marker::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+}
+
+#hit-marker.show {
+  opacity: 1;
+}
+
+#damage-floaters {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.dmg-floater {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-weight: 700;
+  font-size: 18px;
+  color: #ffe066;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
+}
+
+.dmg-floater.kill {
+  color: #ff6b4a;
+  font-size: 22px;
+}
+
+#lock-gate {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at center, rgba(20, 40, 30, 0.35), rgba(5, 10, 8, 0.82)),
+    linear-gradient(160deg, #1a2e24, #0b1210 60%);
+  z-index: 20;
+  cursor: pointer;
+}
+
+#lock-gate.hidden {
+  display: none;
+}
+
+.lock-card {
+  text-align: center;
+  padding: 28px 36px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(8, 14, 12, 0.72);
+  max-width: 420px;
+}
+
+.lock-card h1 {
+  margin: 0 0 10px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.lock-card p {
+  margin: 0 0 14px;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.lock-hint {
+  font-size: 12px;
+  opacity: 0.65;
+}

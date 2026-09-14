@@ -1,0 +1,26 @@
+{
+  "name": "openworld",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "check:rust": "cargo check -p game-core --manifest-path src-tauri/Cargo.toml",
+    "test:rust": "cargo test -p game-core --manifest-path src-tauri/Cargo.toml"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@types/three": "^0.186.0",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.16"
+  }
+}
